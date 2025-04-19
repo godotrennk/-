@@ -1,0 +1,126 @@
+rt const increment = async (id) => {
+    const { data } = await guestInstance.put(`basket/product/${id}/increment/1`)
+    return data
+}
+
+export const decrement = async (id) => {
+    const { data } = await guestInstance.put(`basket/product/${id}/decrement/1`)
+    return data
+}
+
+export const remove = async (id) => {
+    const { data } = await guestInstance.put(`basket/product/${id}/remove`)
+    return data
+}
+
+export const clear = async () => {
+    const { data } = await guestInstance.put(`basket/clear`)
+    return data
+}Копировать
+Создаем хранилище корзины store/BasketStore.js по аналогии с хранилищем каталога и пользователя:
+
+import { makeAutoObservable } from 'mobx'
+
+class BasketStore {
+    _products = []
+
+    constructor() {
+        makeAutoObservable(this)
+    }
+
+    get products() {
+        return this._products
+    }# More well known keys!
+# Standard keys
+FFFFFFFFFFFF
+A0A1A2A3A4A5
+D3F7D3F7D3F7
+000000000000
+
+# Keys from mfoc
+B0B1B2B3B4B5
+4D3A99C351DD
+1A982C7E459A
+AABBCCDDEEFF
+714C5C886E97
+587EE5F9350F
+A0478CC39091
+533CB6C723F6
+8FD0A4F256E9
+
+# Keys from:
+# http://pastebin.com/wcTHXLZZ
+A64598A77478
+26940B21FF5D
+FC00018778F7
+00000FFE2488
+5C598C9C58B5
+E4D2770A89BE
+
+# Keys from:
+# http://pastebin.com/svGjN30Q
+434F4D4D4F41
+434F4D4D4F42
+47524F555041
+47524F555042
+505249564141
+505249564142
+
+# Keys from:
+# http://pastebin.com/d7sSetef
+0297927C0F77
+EE0
+F1D83F964314
+
+# Keys from:
+# http://pastebin.com/pvJX0
+  Обновление версий
+С помощью команды yarn version вы можете обновить версию своего пакета через командную строку.
+
+Например, начиная с этого package.json package.json:
+
+{
+  "name": "example-yarn-package",
+  "version": "1.0.1",
+  "description": "An example package to demonstrate Yarn"
+}
+Когда мы запускаем команду yarn version:
+
+yarn version
+info Current version: 1.0.1
+question New version: 1.0.2
+info New version: 1.0.2
+✨  Done in 9.42s.
+Мы обновим эту информацию package.json:
+
+{
+  "name": "example-yarn-package",
+  "version": "1.0.2",
+  "description": "An example package to demonstrate Yarn"
+}
+Примечание: введённая вами новая версия должна быть допустимой версией SemVer.
+
+Теги Git
+Если вы запустите yarn version в репозитории Git, по умолчанию будет создан аннотированный тег Git в формате v0.0.0.
+
+Вы можете настроить создаваемый тег git или отключить это поведение с помощью yarn config set.
+
+Чтобы изменить префикс тега git, вы можете использовать version-tag-prefix:
+
+yarn config set version-tag-prefix "v"
+Или вы можете изменить сообщение git, используя version-git-message где %s — это строка версии:
+
+yarn config set version-git-message "v%s"
+Вы также можете включить или отключить подписание тегов git с помощью version-sign-git-tag:
+
+yarn config set version-sign-git-tag false
+Вы даже можете полностью включить или отключить поведение тегов git, используя version-git-tag:
+
+yarn config set version-git-tag true
+Если вы хотите остановить выполнение хуков git commit, вы можете отключить их с помощью version-commit-hooks:
+
+yarn config set version-commit-hooks false
+Методы жизненного цикла версии
+При выполнении команды yarn version также будут запущены обычные методы жизненного цикла в следующем порядке:
+
+yarn preversion
