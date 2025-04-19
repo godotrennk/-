@@ -1,0 +1,20 @@
+Гриб 
+официал
+ hasattr(model, 'scale_shift_table'):
+        model.scale_shift_table.data = model.scale_shift_table.data.to(target_device)
+        return
+
+    for k, p in model.named_modules():
+        if hasattr(p, 'weight'):
+            p.to(target_device)
+            return
+
+
+def get_cuda_free_memory_gb(device=None):
+    if device is None:
+        device = gpu
+
+    memory_stats = torch.cuda.memory_stats(device)
+    bytes_active = me
+Активность нге приветствуется своей ходовой частью на персонализацию затрачено менее пяти минут. 
+СпасибО!
