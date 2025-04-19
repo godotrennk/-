@@ -1,0 +1,93 @@
+       s1 = int(float(m) / float(x.shape[0]) * float(x.shape[1]))
+    else:
+        s0 = int(float(m) / float(x.shape[1]) * float(x.shape[0]))
+        s1 = m
+    new_max = max(s1, s0)
+    raw_max = max(x.shape[0], x.shape[1])
+    if new_max < raw_max:
+        interpolation = cv2.INTER_AREA
+    else:
+        interpolation = cv2.INTER_LANCZOS4
+    y = cv2.resize(x, (s1, s0), interpolation=interpolation)
+    return y
+
+
+def d_resize(x, y):
+    H, W, C = y.shape
+    new_min = min(H, W)
+    raw_min = min(x.shape[0], x.shape[1])
+    if new_min < raw_min:
+        interpolation = cv2.INTER_AREA
+    else:
+        interpolation = cv2.INTER_LANCZOS4
+    y = cv2.resize(x, (W, H), interpolation=interpolation)
+    return y
+
+
+def resize_and_center_crop(image, target_width, target_height):
+    if target_height == image.shape[0] and target_width == image.shape[1]:
+        return image
+
+    pil_image = Image.fromarray(image)
+    original_width, original_height = pil_image.size
+    scale_factor = max(target_width / original_width, target_height / original_height)
+    resized_width = int(round(original_width * scale_factor))
+    resized_height = int(round(original_height * scale_factor))
+    resized_image = pil_image.resize((resized_width, resized_height), Image.LANCZOS)
+    left = (resized_width - target_width) / 2
+    top = (resized_height - target_height) / 2
+    right = (resized_width + target_width) / 2
+    bottom = (resized_height + target_height) / 2
+    cropped_image = resized_image.crop((left, top, right, bottom))
+    return np.array(cropped_image)
+
+
+def resize_and_center_crop_pytorch(image, target_width, target_height):
+    B, C, H, W = image.shape
+
+    if H == target_height and W == target_width:
+        return image
+
+    scale_factor = max(target_width / W, target_height / H)
+    resized_width = int(round(W * scale_factor))
+    resized_height = int(round(H * scale_factor))
+
+    resized = torch.nn.functional.interpolate(image, size=(resized_height, resized_width), mode='bilinear', align_corners=False)
+
+    top = (resized_height - target_height) // 2
+    left = (resized_width - target_width) // 2
+    cropped = resized[:, :, top:top + target_height, left:left + target_width]
+
+    return cropped
+
+
+def resize_without_crop(image, target_width, target_height):
+    if target_height == image.shape[0] and target_width == image.shape[1]:
+        return image
+
+    pil_image = Image.fromarray(image)
+    resized_image = pil_image.resize((target_width, target_height), Image.LANCZOS)
+    return np.array(resized_image)
+
+
+def just_crop(image, w, h):
+    if h == image.shape[0] and w == image.shape[1]:
+        return image
+
+    original_height, original_width = image.shape[:2]
+    k = min(original_height / h, original_width / w)
+    new_width = int(round(w * k))
+    new_height = int(round(h * k))
+    x_start = (original_width - new_width) // 2
+    y_start = (original_height - new_height) // 2
+    cropped_image = image[y_start:y_start + new_height, x_start:x_start + new_width]
+    return cropped_image
+
+
+def write_to_json(data, file_path):
+    temp_file_path = file_path + ".tmp"
+    with open(temp_file_path, 'wt', encoding='utf-8') as temp_file:
+        json.dump(data, temp_file, indent=4)
+    os.replace(temp_file_path, file_path)
+    return
+
